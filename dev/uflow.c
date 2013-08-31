@@ -192,16 +192,13 @@ static int uflow_remove(struct platform_device *pdev)
 	return 0;
 }
 
-#ifdef CONFIG_OF
-static const struct of_device_id uio_of_genirq_match[] = {
-	{.compatible = "generic-uio",},
+static const struct of_device_id uflow_of_match[] = {
+	//{.compatible = "xlnx,conv-accelerator-1.00.a",},
+	{.compatible = "xlnx,conv-loopback-1.00.a",},
 	{ /* empty for now */ },
 };
 
-MODULE_DEVICE_TABLE(of, uio_of_genirq_match);
-#else
-# define uio_of_genirq_match NULL
-#endif
+MODULE_DEVICE_TABLE(of, uflow_of_match);
 
 static struct platform_driver uflow_driver = {
 	.probe = uflow_probe,
@@ -209,7 +206,7 @@ static struct platform_driver uflow_driver = {
 	.driver = {
 		   .name = DRIVER_NAME,
 		   .owner = THIS_MODULE,
-		   .of_match_table = uio_of_genirq_match,
+		   .of_match_table = uflow_of_match,
 		   },
 };
 
