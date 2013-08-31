@@ -1,13 +1,7 @@
 /*
- * drivers/uio/uio_pdrv_genirq.c
- *
  * Userspace I/O platform driver with generic IRQ handling code.
  *
- * Copyright (C) 2008 Magnus Damm
- *
- * Based on uio_pdrv.c by Uwe Kleine-Koenig,
- * Copyright (C) 2008 by Digi International Inc.
- * All rights reserved.
+ * Based on uio_pdrv_genirq.c by Magnus Damm
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published by
@@ -274,7 +268,7 @@ static struct platform_driver uflow_driver = {
 
 module_platform_driver(uflow_driver);
 
-MODULE_AUTHOR("Magnus Damm");
+MODULE_AUTHOR("elab");
 MODULE_DESCRIPTION("Userspace I/O platform driver for conv devices");
 MODULE_LICENSE("GPL v2");
 MODULE_ALIAS("platform:" DRIVER_NAME);
