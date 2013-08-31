@@ -75,6 +75,7 @@ static int uflow_probe(struct platform_device *pdev)
 	struct uflow_platdata *priv;
 	struct uio_mem *uiomem;
 	int ret = -EINVAL;
+	int nb_mem = 0;
 	int i;
 
 	if (pdev->dev.of_node) {
@@ -131,6 +132,18 @@ static int uflow_probe(struct platform_device *pdev)
 		uiomem->addr = r->start;
 		uiomem->size = resource_size(r);
 		uiomem->name = r->name;
+
+		if (uiomem->size != 0) {
+			if (!request_mem_region
+			    (uiomem->addr, uiomem->size, DRIVER_NAME)) {
+				dev_err(&pdev->dev,
+					"request_mem_region failed. Aborting.\n");
+				ret = -EBUSY;
+				goto bad3;
+			}
+		}
+
+		++nb_mem;
 		++uiomem;
 	}
 
@@ -167,6 +180,14 @@ static int uflow_probe(struct platform_device *pdev)
 	return 0;
  bad1:
 	kfree(priv);
+ bad3:
+	uiomem = &uioinfo->mem[0];
+	for (i = 0; i < nb_mem; ++i) {
+		if (uiomem->size != 0) {
+			release_mem_region(uiomem->addr, uiomem->size);
+		}
+		++uiomem;
+	}
  bad0:
 	/* kfree uioinfo for OF */
 	if (pdev->dev.of_node)
@@ -178,6 +199,15 @@ static int uflow_probe(struct platform_device *pdev)
 static int uflow_remove(struct platform_device *pdev)
 {
 	struct uflow_platdata *priv = platform_get_drvdata(pdev);
+	struct uio_mem *uiomem;
+
+	uiomem = &priv->uioinfo->mem[0];
+	while (uiomem < &priv->uioinfo->mem[MAX_UIO_MAPS]) {
+		if (uiomem->size != 0) {
+			release_mem_region(uiomem->addr, uiomem->size);
+		}
+		++uiomem;
+	}
 
 	uio_unregister_device(priv->uioinfo);
 
