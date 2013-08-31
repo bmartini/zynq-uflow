@@ -15,7 +15,6 @@
 #include <linux/module.h>
 #include <linux/interrupt.h>
 #include <linux/stringify.h>
-#include <linux/pm_runtime.h>
 #include <linux/slab.h>
 
 #include <linux/of.h>
@@ -30,24 +29,6 @@ struct uflow_platdata {
 	unsigned long flags;
 	struct platform_device *pdev;
 };
-
-static int uflow_open(struct uio_info *info, struct inode *inode)
-{
-	struct uflow_platdata *priv = info->priv;
-
-	/* Wait until the Runtime PM code has woken up the device */
-	pm_runtime_get_sync(&priv->pdev->dev);
-	return 0;
-}
-
-static int uflow_release(struct uio_info *info, struct inode *inode)
-{
-	struct uflow_platdata *priv = info->priv;
-
-	/* Tell the Runtime PM code that the device has become idle */
-	pm_runtime_put_sync(&priv->pdev->dev);
-	return 0;
-}
 
 static irqreturn_t uflow_handler(int irq, struct uio_info *dev_info)
 {
@@ -172,18 +153,9 @@ static int uflow_probe(struct platform_device *pdev)
 		uioinfo->irq = ret;
 		uioinfo->handler = uflow_handler;
 		uioinfo->irqcontrol = uflow_irqcontrol;
-		uioinfo->open = uflow_open;
-		uioinfo->release = uflow_release;
 	}
 
 	uioinfo->priv = priv;
-
-	/* Enable Runtime PM for this device:
-	 * The device starts in suspended state to allow the hardware to be
-	 * turned off by default. The Runtime PM bus code should power on the
-	 * hardware and enable clocks at open().
-	 */
-	pm_runtime_enable(&pdev->dev);
 
 	ret = uio_register_device(&pdev->dev, priv->uioinfo);
 	if (ret) {
@@ -195,7 +167,6 @@ static int uflow_probe(struct platform_device *pdev)
 	return 0;
  bad1:
 	kfree(priv);
-	pm_runtime_disable(&pdev->dev);
  bad0:
 	/* kfree uioinfo for OF */
 	if (pdev->dev.of_node)
@@ -209,7 +180,6 @@ static int uflow_remove(struct platform_device *pdev)
 	struct uflow_platdata *priv = platform_get_drvdata(pdev);
 
 	uio_unregister_device(priv->uioinfo);
-	pm_runtime_disable(&pdev->dev);
 
 	priv->uioinfo->handler = NULL;
 	priv->uioinfo->irqcontrol = NULL;
@@ -221,28 +191,6 @@ static int uflow_remove(struct platform_device *pdev)
 	kfree(priv);
 	return 0;
 }
-
-static int uflow_runtime_nop(struct device *dev)
-{
-	/* Runtime PM callback shared between ->runtime_suspend()
-	 * and ->runtime_resume(). Simply returns success.
-	 *
-	 * In this driver pm_runtime_get_sync() and pm_runtime_put_sync()
-	 * are used at open() and release() time. This allows the
-	 * Runtime PM code to turn off power to the device while the
-	 * device is unused, ie before open() and after release().
-	 *
-	 * This Runtime PM callback does not need to save or restore
-	 * any registers since user space is responsbile for hardware
-	 * register reinitialization after open().
-	 */
-	return 0;
-}
-
-static const struct dev_pm_ops uflow_dev_pm_ops = {
-	.runtime_suspend = uflow_runtime_nop,
-	.runtime_resume = uflow_runtime_nop,
-};
 
 #ifdef CONFIG_OF
 static const struct of_device_id uio_of_genirq_match[] = {
@@ -261,7 +209,6 @@ static struct platform_driver uflow_driver = {
 	.driver = {
 		   .name = DRIVER_NAME,
 		   .owner = THIS_MODULE,
-		   .pm = &uflow_dev_pm_ops,
 		   .of_match_table = uio_of_genirq_match,
 		   },
 };
