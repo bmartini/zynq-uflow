@@ -223,7 +223,7 @@ static int uflow_remove(struct platform_device *pdev)
 }
 
 static const struct of_device_id uflow_of_match[] = {
-	//{.compatible = "xlnx,conv-accelerator-1.00.a",},
+	{.compatible = "xlnx,conv-accelerator-1.00.a",},
 	{.compatible = "xlnx,conv-loopback-1.00.a",},
 	{ /* empty for now */ },
 };

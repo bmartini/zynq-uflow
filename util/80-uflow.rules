@@ -1,1 +1,2 @@
-KERNEL=="uio*", ATTRS{name}=="conv-loopback", SYMLINK+="uflow", MODE="0666"
+KERNEL=="uio*", ATTRS{name}=="conv-accelerator", SYMLINK+="uflow-accel", MODE="0666"
+KERNEL=="uio*", ATTRS{name}=="conv-loopback", SYMLINK+="uflow-loop", MODE="0666"
