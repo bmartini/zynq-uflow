@@ -1,0 +1,1 @@
+KERNEL=="uio*", ATTRS{name}=="conv-loopback", SYMLINK+="uflow", MODE="0666"
