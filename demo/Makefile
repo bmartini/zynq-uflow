@@ -1,14 +1,19 @@
 CC = gcc
-LDFLAGS :=
+LDFLAGS := -luflow
 CFLAGS := -c -Wall -Werror
 INCLUDES := -I.
 
 
 .PHONY : all
-all : test
+all : test test-lib
 
 
 test : uflow-test.o
+	$(CC) $< -o $@ $(LDFLAGS)
+
+
+
+test-lib : uflow-test-lib.o
 	$(CC) $< -o $@ $(LDFLAGS)
 
 
@@ -18,4 +23,4 @@ test : uflow-test.o
 
 .PHONY : clean
 clean :
-	rm -f *.o test
+	rm -f *.o test test-lib
