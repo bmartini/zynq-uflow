@@ -5,7 +5,6 @@
 
 int main(int argc, char *argv[])
 {
-	void *config_ptr;
 	int i;
 	int value;
 
@@ -14,17 +13,16 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
-	config_ptr = config_init(argv[1]);
-	if (NULL == config_ptr) {
+	if (config_init(argv[1]) != 0) {
 		return (1);
 	}
 
 	for (i = 0; i < REGISTER_NB; i++) {
-		config_write(config_ptr, i, i * 2);
+		config_write(i, i * 2);
 	}
 
 	for (i = 0; i < REGISTER_NB; i++) {
-		value = config_read(config_ptr, i);
+		value = config_read(i);
 		printf("reg %d: %d: %x\n", i, value, value);
 	}
 

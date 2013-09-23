@@ -9,7 +9,7 @@
 int main(int argc, char *argv[])
 {
 	int fd;
-	void *map_addr;
+	void *map_ptr;
 	volatile unsigned int *mapped;
 	int i;
 
@@ -24,15 +24,15 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	map_addr =
+	map_ptr =
 	    mmap(NULL, REGISTER_NB, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
 
-	if (map_addr == MAP_FAILED) {
+	if (map_ptr == MAP_FAILED) {
 		perror("Failed to mmap");
 		return 1;
 	}
 
-	mapped = map_addr;
+	mapped = map_ptr;
 
 	/*
 	 * write and read to all AXI Lite registers
@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
 
 	printf("\n");
 
-	munmap(map_addr, REGISTER_NB);
+	munmap(map_ptr, REGISTER_NB);
 
 	close(fd);
 	return 0;
