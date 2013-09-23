@@ -5,10 +5,11 @@
 #include <sys/mman.h>
 #include <unistd.h>
 
-void *config_init(const char *path)
+static void *ptr;
+
+int config_init(const char *path)
 {
 	int fd;
-	void *ptr;
 	assert((fd = open(path, O_RDWR)) >= 0);
 
 	ptr =
@@ -16,33 +17,32 @@ void *config_init(const char *path)
 
 	close(fd);
 	if (ptr == MAP_FAILED) {
-		return NULL;
+		return -1;	// failure
 	} else {
-		return ptr;
+		return 0;	// success
 	}
 }
 
-void config_write(void *ptr, unsigned int addr, unsigned int value)
+void config_write(unsigned int addr, unsigned int value)
 {
-	volatile unsigned int *reg = ((volatile unsigned int *) ptr) + addr;
+	volatile unsigned int *reg = ((volatile unsigned int *)ptr) + addr;
 
 	*reg = value;
 }
 
-void config_write_array(void *ptr, unsigned int addr, unsigned int *array,
-			int length)
+void config_write_array(unsigned int addr, unsigned int *array, int length)
 {
 	int xx;
-	volatile unsigned int *reg = ((volatile unsigned int *) ptr) + addr;
+	volatile unsigned int *reg = ((volatile unsigned int *)ptr) + addr;
 
 	for (xx = 0; xx < length; xx++) {
 		*reg = array[xx];
 	}
 }
 
-int config_read(void *ptr, unsigned int addr)
+int config_read(unsigned int addr)
 {
-	volatile unsigned int *reg = ((volatile unsigned int *) ptr) + addr;
+	volatile unsigned int *reg = ((volatile unsigned int *)ptr) + addr;
 
 	return *reg;
 }

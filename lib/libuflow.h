@@ -7,14 +7,14 @@ extern "C" {
 
 	const int REGISTER_NB = 32;
 
-	void *config_init(const char *path);
+	int config_init(const char *path);
 
-	void config_write(void *ptr, unsigned int addr, unsigned int value);
+	int config_read(unsigned int addr);
 
-	void config_write_array(void *ptr, unsigned int addr,
+	void config_write(unsigned int addr, unsigned int value);
+
+	void config_write_array(unsigned int addr,
 				unsigned int *array, int length);
-
-	int config_read(void *ptr, unsigned int addr);
 
 #ifdef __cplusplus
 }
