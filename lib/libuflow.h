@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-	const int REGISTER_NB = 32;
+	#define REGISTER_NB 32
 
 	int config_init(const char *path);
 
