@@ -40,6 +40,16 @@ void config_write_array(unsigned int addr, unsigned int *array, int length)
 	}
 }
 
+void config_write_sequence(unsigned int *addr, unsigned int *array, int length)
+{
+	int xx;
+	volatile unsigned int *reg = ((volatile unsigned int *)ptr);
+
+	for (xx = 0; xx < length; xx++) {
+		*(reg + addr[xx]) = array[xx];
+	}
+}
+
 int config_read(unsigned int addr)
 {
 	volatile unsigned int *reg = ((volatile unsigned int *)ptr) + addr;

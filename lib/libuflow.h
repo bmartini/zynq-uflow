@@ -16,6 +16,9 @@ extern "C" {
 	void config_write_array(unsigned int addr,
 				unsigned int *array, int length);
 
+	void config_write_sequence(unsigned int *addr,
+				   unsigned int *array, int length);
+
 #ifdef __cplusplus
 }
 #endif
