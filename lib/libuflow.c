@@ -56,3 +56,8 @@ int config_read(unsigned int addr)
 
 	return *reg;
 }
+
+void config_poll(unsigned int addr, unsigned int value)
+{
+	while (value > config_read(addr));
+}

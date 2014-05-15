@@ -19,6 +19,7 @@ extern "C" {
 	void config_write_sequence(unsigned int *addr,
 				   unsigned int *array, int length);
 
+	void config_poll(unsigned int addr, unsigned int value);
 #ifdef __cplusplus
 }
 #endif
