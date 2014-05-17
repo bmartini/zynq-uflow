@@ -60,5 +60,5 @@ int config_read(unsigned int addr)
 
 void config_poll(unsigned int addr, unsigned int value)
 {
-	while (value > config_read(addr));
+	while (value > config_read(addr)) ;
 }
