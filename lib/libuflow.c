@@ -30,7 +30,7 @@ void config_write(unsigned int addr, unsigned int value)
 	*reg = value;
 }
 
-void config_write_array(unsigned int addr, unsigned int *array, int length)
+void config_write_array(unsigned int addr, const unsigned int *array, int length)
 {
 	int xx;
 	volatile unsigned int *reg = ((volatile unsigned int *)ptr) + addr;
