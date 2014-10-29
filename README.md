@@ -41,7 +41,7 @@ make KDIR=../../linux-xlnx
 
 Use of the driver module requires it to be inserted into the running Linux
 kernel. Once inserted it will automatically create a character device file in
-'/dev' called '/dev/xdma'. However, the default permissions will not allow
+'/dev' called '/dev/uflow-cfg'. However, the default permissions will not allow
 non-root users to read/write to the file. These permissions can be overridden
 by installing the udev rule file found in this projects 'util' directory into
 the systems '/etc/udev/rules.d/' directory. Alternatively, once the modules
